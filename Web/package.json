@@ -1,0 +1,18 @@
+{
+  "name": "burger-rush-web",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Burger Rush - 3D Idle Arcade Simulation (Web/Mobile build)",
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host 0.0.0.0",
+    "build": "vite build",
+    "preview": "vite preview --host 0.0.0.0"
+  },
+  "dependencies": {
+    "three": "^0.169.0"
+  },
+  "devDependencies": {
+    "vite": "^5.4.10"
+  }
+}

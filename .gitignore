@@ -1,0 +1,41 @@
+# ─────────── Web ───────────
+node_modules/
+dist/
+.vite/
+*.local
+npm-debug.log*
+
+# ─────────── Unity ───────────
+[Ll]ibrary/
+[Tt]emp/
+[Oo]bj/
+[Bb]uild/
+[Bb]uilds/
+[Ll]ogs/
+[Uu]ser[Ss]ettings/
+[Mm]emoryCaptures/
+[Rr]ecordings/
+Assets/AssetStoreTools*
+*.csproj
+*.unityproj
+*.sln
+*.suo
+*.tmp
+*.user
+*.userprefs
+*.pidb
+*.booproj
+*.svd
+*.pdb
+*.mdb
+*.opendb
+*.VC.db
+.meta
+SysInfo.txt
+crashlytics-build.properties
+
+# ─────────── Sistem ───────────
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/

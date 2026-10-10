@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+<meta name="theme-color" content="#1A1A2E" />
+<title>Burger Rush — 3D Idle Arcade Simulation</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@600;800&display=swap" rel="stylesheet" />
+</head>
+<body>
+  <div id="app">
+    <div id="viewport"></div>
+
+    <!-- ══════════════════ HUD ══════════════════ -->
+    <div id="hud" class="hidden">
+      <div class="hud-top">
+        <div class="hud-chip" id="hud-coins">🪙 <span>0</span></div>
+        <div class="hud-chip" id="hud-gems">💎 <span>0</span></div>
+        <div class="hud-level">
+          <div class="hud-level-row">
+            <span id="hud-level-label">Level 1</span>
+            <span id="hud-timer">02:00</span>
+          </div>
+          <div class="bar bar-slim"><div class="bar-fill" id="hud-progress"></div></div>
+          <div class="hud-goal" id="hud-goal">Sipariş: 0/8</div>
+        </div>
+        <div class="hud-chip hud-btn" id="btn-pause">⏸</div>
+      </div>
+
+      <div class="hud-side">
+        <div class="boost-tag hidden" id="boost-2x">🎬 2x Gelir <span>0s</span></div>
+        <div class="boost-tag hidden" id="boost-slow">🐢 Sabır <span>0s</span></div>
+      </div>
+
+      <div class="hud-bottom">
+        <button class="fab" id="btn-hr"><span>👨‍🍳</span><small>HR</small></button>
+        <button class="fab" id="btn-upgrade"><span>🛠️</span><small>Upgrade</small></button>
+        <button class="fab" id="btn-ad"><span>🎬</span><small>2x Gelir</small></button>
+        <button class="fab" id="btn-gem-cook"><span>⚡</span><small>10💎</small></button>
+        <button class="fab" id="btn-gem-patience"><span>🐢</span><small>5💎</small></button>
+      </div>
+
+      <div id="toasts"></div>
+    </div>
+
+    <!-- ══════════════════ BOOT ══════════════════ -->
+    <section class="screen active" id="screen-boot">
+      <div class="boot-wrap">
+        <div class="logo-big">🍔 BURGER<span>RUSH</span></div>
+        <div class="loader"><div class="loader-fill" id="boot-fill"></div></div>
+        <div class="boot-text" id="boot-text">SDK'lar başlatılıyor…</div>
+      </div>
+    </section>
+
+    <!-- ══════════════════ MAIN MENU ══════════════════ -->
+    <section class="screen" id="screen-menu">
+      <div class="menu-wrap">
+        <div class="logo-big">🍔 BURGER<span>RUSH</span></div>
+        <div class="tagline">Küçük bir burger standından küresel bir imparatorluğa</div>
+        <div class="menu-buttons">
+          <button class="btn btn-primary btn-xl" id="btn-play">▶ OYNA</button>
+          <button class="btn" id="btn-shop">🛒 Mağaza</button>
+          <button class="btn" id="btn-wardrobe">🎨 Gardırop</button>
+          <button class="btn" id="btn-settings">⚙️ Ayarlar</button>
+        </div>
+        <div class="menu-stats" id="menu-stats"></div>
+        <div class="chef-pass hidden" id="chef-pass-badge">👨‍🍳 CHEF PASS AKTİF</div>
+      </div>
+    </section>
+
+    <!-- ══════════════════ WORLD MAP ══════════════════ -->
+    <section class="screen" id="screen-worldmap">
+      <header class="screen-head">
+        <button class="btn btn-icon" data-back="menu">◀</button>
+        <h2>🗺️ Dünya Haritası</h2>
+        <div class="hud-chip">🪙 <span id="wm-coins">0</span></div>
+      </header>
+      <div class="scroll" id="location-list"></div>
+    </section>
+
+    <!-- ══════════════════ LEVEL SELECT ══════════════════ -->
+    <section class="screen" id="screen-levelselect">
+      <header class="screen-head">
+        <button class="btn btn-icon" data-back="worldmap">◀</button>
+        <h2 id="ls-title">Bölüm Seç</h2>
+        <div class="hud-chip">🪙 <span id="ls-coins">0</span></div>
+      </header>
+      <div class="scroll"><div class="level-grid" id="level-grid"></div></div>
+    </section>
+
+    <!-- ══════════════════ RESULT ══════════════════ -->
+    <section class="screen" id="screen-result">
+      <div class="result-card">
+        <h2 id="result-title">Bölüm Tamamlandı!</h2>
+        <div class="stars" id="result-stars"></div>
+        <div class="result-rows" id="result-rows"></div>
+        <div class="result-buttons">
+          <button class="btn" id="btn-result-ad">🎬 Ödülü 2x Al</button>
+          <button class="btn btn-primary" id="btn-result-next">Sonraki Bölüm ▶</button>
+          <button class="btn btn-ghost" id="btn-result-menu">Ana Menü</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════════════ FAIL ══════════════════ -->
+    <section class="screen" id="screen-fail">
+      <div class="result-card fail">
+        <h2>Bölüm Başarısız 😞</h2>
+        <div class="result-rows" id="fail-rows"></div>
+        <div class="result-buttons">
+          <button class="btn btn-primary" id="btn-revive-ad">🎬 Reklam İzle — Devam Et</button>
+          <button class="btn" id="btn-revive-gem">💎 50 Gem ile Devam</button>
+          <button class="btn btn-ghost" id="btn-fail-menu">Ana Menü</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════════════ PANELS ══════════════════ -->
+    <div class="panel-layer hidden" id="panel-layer">
+      <!-- Offline earnings -->
+      <div class="panel hidden" id="panel-offline">
+        <h3>🌙 Offline Gelir</h3>
+        <p class="muted" id="offline-desc"></p>
+        <div class="big-number" id="offline-amount">🪙 0</div>
+        <div class="panel-buttons">
+          <button class="btn btn-primary" id="btn-offline-ad">🎬 2x ile Al</button>
+          <button class="btn" id="btn-offline-claim">Al</button>
+        </div>
+      </div>
+
+      <!-- HR Office -->
+      <div class="panel hidden" id="panel-hr">
+        <h3>👨‍🍳 HR Office — Personel</h3>
+        <div class="scroll panel-scroll" id="hr-list"></div>
+        <div class="panel-buttons"><button class="btn btn-ghost" data-close-panel>Kapat</button></div>
+      </div>
+
+      <!-- Upgrade Office -->
+      <div class="panel hidden" id="panel-upgrade">
+        <h3>🛠️ Upgrade Office — Ekipman</h3>
+        <div class="scroll panel-scroll" id="upgrade-list"></div>
+        <div class="panel-buttons"><button class="btn btn-ghost" data-close-panel>Kapat</button></div>
+      </div>
+
+      <!-- Shop -->
+      <div class="panel hidden" id="panel-shop">
+        <h3>🛒 Mağaza</h3>
+        <div class="tabs" id="shop-tabs"></div>
+        <div class="scroll panel-scroll" id="shop-list"></div>
+        <div class="panel-buttons"><button class="btn btn-ghost" data-close-panel>Kapat</button></div>
+      </div>
+
+      <!-- Wardrobe -->
+      <div class="panel hidden" id="panel-wardrobe">
+        <h3>🎨 Gardırop</h3>
+        <div class="tabs" id="wardrobe-tabs"></div>
+        <div class="scroll panel-scroll" id="wardrobe-list"></div>
+        <div class="panel-buttons"><button class="btn btn-ghost" data-close-panel>Kapat</button></div>
+      </div>
+
+      <!-- Settings -->
+      <div class="panel hidden" id="panel-settings">
+        <h3>⚙️ Ayarlar</h3>
+        <div class="settings-list">
+          <label class="row-toggle">🎵 Müzik <input type="checkbox" id="set-music" checked /></label>
+          <label class="row-toggle">🔊 Ses Efektleri <input type="checkbox" id="set-sfx" checked /></label>
+          <label class="row-toggle">📳 Titreşim <input type="checkbox" id="set-haptic" checked /></label>
+          <label class="row-toggle">✨ Gölgeler (Performans) <input type="checkbox" id="set-shadows" checked /></label>
+          <div class="row-toggle">📊 İstatistik <span id="set-stats" class="muted small"></span></div>
+        </div>
+        <div class="panel-buttons">
+          <button class="btn btn-danger" id="btn-reset-save">Kaydı Sıfırla</button>
+          <button class="btn btn-ghost" data-close-panel>Kapat</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Simulated ad overlay -->
+    <div class="ad-overlay hidden" id="ad-overlay">
+      <div class="ad-box">
+        <div class="ad-label">REKLAM (SİMÜLASYON)</div>
+        <div class="ad-title" id="ad-title">Ödüllü Reklam</div>
+        <div class="ad-timer" id="ad-timer">3</div>
+        <button class="btn btn-ghost" id="btn-ad-close">Kapat ✕</button>
+      </div>
+    </div>
+
+    <!-- Pause -->
+    <div class="panel-layer hidden" id="pause-layer">
+      <div class="panel">
+        <h3>⏸ Oyun Duraklatıldı</h3>
+        <div class="panel-buttons column">
+          <button class="btn btn-primary" id="btn-resume">Devam Et</button>
+          <button class="btn" id="btn-restart">Yeniden Başlat</button>
+          <button class="btn btn-ghost" id="btn-quit">Ana Menü</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="/src/main.js"></script>
+</body>
+</html>

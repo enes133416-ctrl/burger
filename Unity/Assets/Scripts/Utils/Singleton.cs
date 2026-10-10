@@ -1,0 +1,32 @@
+using UnityEngine;
+
+namespace BurgerRush.Utils
+{
+    /// <summary>
+    /// Sahneler arası yaşayan tekil (singleton) MonoBehaviour tabanı.
+    /// </summary>
+    public abstract class Singleton<T> : MonoBehaviour where T : MonoBehaviour
+    {
+        public static T Instance { get; private set; }
+        public static bool HasInstance => Instance != null;
+
+        [SerializeField] protected bool persistent = true;
+
+        protected virtual void Awake()
+        {
+            if (Instance != null && Instance != this)
+            {
+                Destroy(gameObject);
+                return;
+            }
+
+            Instance = this as T;
+            if (persistent) DontDestroyOnLoad(gameObject);
+        }
+
+        protected virtual void OnDestroy()
+        {
+            if (Instance == this) Instance = null;
+        }
+    }
+}
