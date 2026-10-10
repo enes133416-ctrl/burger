@@ -1,0 +1,38 @@
+name: CI
+
+on:
+  push:
+    branches: ['**']
+  pull_request:
+    branches: [main]
+
+jobs:
+  web:
+    name: Web — test & build
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: Web
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+          cache-dependency-path: Web/package-lock.json
+
+      - name: Bağımlılıklar
+        run: npm ci
+
+      - name: Mantık testleri
+        run: node tests/logic.test.mjs
+
+      - name: Üretim derlemesi
+        run: npm run build
+
+      - name: Derleme çıktısını yükle
+        uses: actions/upload-artifact@v4
+        with:
+          name: burger-rush-web-dist
+          path: Web/dist
