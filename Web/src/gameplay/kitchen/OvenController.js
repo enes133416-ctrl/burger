@@ -11,6 +11,9 @@ import { UpgradeSystem } from '../../economy/UpgradeSystem.js';
 import { ECONOMY, INGREDIENTS } from '../../core/Config.js';
 import { Haptic } from '../../input/HapticManager.js';
 
+const RAW_COLOR = new THREE.Color(0x9C4A2F);
+const COOKED_COLOR = new THREE.Color(0x5E3119);
+
 export const SlotState = { Empty: 'empty', Cooking: 'cooking', Ready: 'ready', Burnt: 'burnt' };
 
 const INGREDIENT_VALUE = INGREDIENTS.patty.value;
@@ -27,6 +30,9 @@ export class OvenController {
 
   applyLevel(level, silent = false) {
     this.config = UpgradeSystem.grillConfig;
+    // Ekipman yükseltmesi oyun ortasında da gelebilir: önce slotları temizle,
+    // aksi halde pişen köftelerin mesh'i sahneden silinir ama state'i kalır.
+    if (!silent) this.slots.forEach(slot => this.clearSlot(slot));
     const nodes = this.world.layoutGrillSlots(this.config.slots);
     const old = this.slots;
     this.slots = nodes.map((n, i) => old[i] || {
@@ -130,7 +136,7 @@ export class OvenController {
       mat.emissiveIntensity = 0.35 + Math.sin(performance.now() / 200) * 0.12;
     } else {
       const t = Math.min(1, slot.progress);
-      mat.color.setHex(0x9C4A2F).lerp(new THREE.Color(0x5E3119), t);
+      mat.color.copy(RAW_COLOR).lerp(COOKED_COLOR, t);
       mat.emissive.setHex(0xff5a00);
       mat.emissiveIntensity = t * 0.25;
     }

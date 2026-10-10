@@ -24,7 +24,7 @@ export class KitchenWorld {
     container.appendChild(this.renderer.domElement);
 
     this.scene = new THREE.Scene();
-    this.scene.fog = new THREE.Fog(0x1a1a2e, 18, 42);
+    this.scene.fog = new THREE.Fog(0x1a1a2e, 28, 120);   // dikey ekranda kamera uzaklaşır, fog sahneyi yutmasın
 
     this.camera = new THREE.PerspectiveCamera(48, 1, 0.1, 120);
     this.camera.position.set(0, 9, 10.6);
